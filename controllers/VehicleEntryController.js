@@ -2,6 +2,7 @@ import * as mongodb from "../services/mongodb.services.js";
 import VehicleWithPoConfig from "../Models/VehicleWithPoConfig.js";
 import VehicleWithoutPoConfig from "../Models/VehicleWithoutPoConfig.js";
 import VehicleData from "../Models/VehicleDataModel.js";
+import VacentVehicle from "../Models/VacentVehicle.js";
 export const VehicleEntryController = {
   async getConfigByContentId(req, res) {
     try {
@@ -10,9 +11,11 @@ export const VehicleEntryController = {
       if (type === "vehicle_with_po") {
         config = await mongodb.find(VehicleWithPoConfig, {});
       } else if (type === "vehicle_without_po") {
-        config = await mongodb.find(VehicleWithoutPoConfig, {
-          contentId: type,
-        });
+        config = await mongodb.find(VehicleWithoutPoConfig, {});
+        console.log(type);
+      } else if (type === "vacent_vehicle") {
+        config = await mongodb.find(VacentVehicle, {});
+      } else if (type === "other") {
       } else {
         return res
           .status(400)
@@ -49,7 +52,22 @@ export const VehicleEntryController = {
           userId: "admin",
           entry_type: "with_po",
           status: "entry_draft",
-          entry_type: "with_po",
+          HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
+          ItemFieldConfigurations: data?.ItemFieldConfigurations,
+        });
+      } else if (type === "vehicle_without_po") {
+        response = await mongodb.insert(VehicleData, {
+          userId: "admin",
+          entry_type: "without_po",
+          status: "entry_draft",
+          HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
+          ItemFieldConfigurations: data?.ItemFieldConfigurations,
+        });
+      } else if (type === "vacent_vehicle") {
+        response = await mongodb.insert(VehicleData, {
+          userId: "admin",
+          entry_type: "vacent",
+          status: "entry_draft",
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
         });
