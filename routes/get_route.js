@@ -11,14 +11,7 @@ get_router.get(
     next();
   },
   (req, res) => {
-    const { id } = req.params;
-    if (id === "vehicle_with_po") {
-      return AdminController.getVehicleWithPoConfig(req, res);
-    } else if (id === "vehicle_without_po") {
-      return AdminController.getVehicleWithoutPoConfig(req, res);
-    } else {
-      return res.status(400).json({ error: "Invalid configuration ID" });
-    }
+    return AdminController.getConfig(req, res);
   }
 );
 

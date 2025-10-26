@@ -2,7 +2,8 @@ import * as mongodb from "../services/mongodb.services.js";
 import VehicleWithPoConfig from "../Models/VehicleWithPoConfig.js";
 import VehicleWithoutPoConfig from "../Models/VehicleWithoutPoConfig.js";
 import VehicleData from "../Models/VehicleDataModel.js";
-import VacentVehicle from "../Models/VacentVehicle.js";
+import VacantVehicle from "../Models/VacantVehicle.js";
+import OtherVehicle from "../Models/OtherVehicle.js";
 export const VehicleEntryController = {
   async getConfigByContentId(req, res) {
     try {
@@ -13,9 +14,10 @@ export const VehicleEntryController = {
       } else if (type === "vehicle_without_po") {
         config = await mongodb.find(VehicleWithoutPoConfig, {});
         console.log(type);
-      } else if (type === "vacent_vehicle") {
-        config = await mongodb.find(VacentVehicle, {});
+      } else if (type === "vacant_vehicle") {
+        config = await mongodb.find(VacantVehicle, {});
       } else if (type === "other") {
+        config = await mongodb.find(OtherVehicle, {});
       } else {
         return res
           .status(400)
@@ -63,14 +65,26 @@ export const VehicleEntryController = {
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
         });
-      } else if (type === "vacent_vehicle") {
+      } else if (type === "vacant_vehicle") {
         response = await mongodb.insert(VehicleData, {
           userId: "admin",
-          entry_type: "vacent",
+          entry_type: "vacant",
           status: "entry_draft",
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
         });
+      } else if (type === "other") {
+        response = await mongodb.insert(VehicleData, {
+          userId: "admin",
+          entry_type: "other",
+          status: "entry_draft",
+          HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
+          ItemFieldConfigurations: data?.ItemFieldConfigurations,
+        });
+      } else {
+        return res
+          .status(400)
+          .json({ messageType: "E", error: "Invalid type parameter" });
       }
 
       res.status(200).json({ messageType: "S", data: response });
