@@ -88,40 +88,42 @@ export const AdminController = {
   },
   async updatedConfig(req, res) {
     const { id } = req.params;
+    const { HeaderFieldConfigurations, ItemFieldConfigurations } = req.body;
+    const configMap = {
+      vehicle_with_po: VehicleWithPoConfig,
+      vehicle_without_po: VehicleWithoutPoConfig,
+      other_vehicle: OtherVehicle,
+      vacant_vehicle: VacantVehicle,
+    };
+
+    const Model = configMap[id];
+
+    if (!Model) {
+      return res
+        .status(400)
+        .json({ messageType: "E", error: "Invalid configuration ID" });
+    }
     try {
-      if (id === "vehicle_with_po") {
-        const { HeaderFieldConfigurations, ItemFieldConfigurations } = req.body;
-        const updatedConfig = await mongodb.update(VehicleWithPoConfig, {
-          filter: { componentId: "vehicle_with_po" },
+      console.log(`HeaderFieldConfigurations: ${JSON.stringify(HeaderFieldConfigurations)}`);
+      let updatedConfig = await mongodb.update(Model, {
+        filter: { componentId: id },
+        update: { HeaderFieldConfigurations, ItemFieldConfigurations },
+      });
+      console.log(`Updated Config: ${updatedConfig}`);
+      if (!updatedConfig) {
+        console.log(
+          `Config document for ${id} missing. Re-creating with defaults.`
+        );
+        const newConfigDocument = new Model({
+          componentId: id,
+        });
+        const defaultDocument = await newConfigDocument.save();
+        updatedConfig = await mongodb.update(Model, {
+          filter: { componentId: id },
           update: { HeaderFieldConfigurations, ItemFieldConfigurations },
         });
-        return res.status(200).json({ messageType: "S", data: updatedConfig });
-      } else if (id === "vehicle_without_po") {
-        const { HeaderFieldConfigurations, ItemFieldConfigurations } = req.body;
-        const updatedConfig = await mongodb.update(VehicleWithoutPoConfig, {
-          filter: { componentId: "vehicle_without_po" },
-          update: { HeaderFieldConfigurations, ItemFieldConfigurations },
-        });
-        return res.status(200).json({ messageType: "S", data: updatedConfig });
-      } else if (id === "other_vehicle") {
-        const { HeaderFieldConfigurations, ItemFieldConfigurations } = req.body;
-        const updatedConfig = await mongodb.update(OtherVehicle, {
-          filter: { componentId: "other_vehicle" },
-          update: { HeaderFieldConfigurations, ItemFieldConfigurations },
-        });
-        return res.status(200).json({ messageType: "S", data: updatedConfig });
-      } else if (id === "vacant_vehicle") {
-        const { HeaderFieldConfigurations, ItemFieldConfigurations } = req.body;
-        const updatedConfig = await mongodb.update(VacantVehicle, {
-          filter: { componentId: "vacant_vehicle" },
-          update: { HeaderFieldConfigurations, ItemFieldConfigurations },
-        });
-        return res.status(200).json({ messageType: "S", data: updatedConfig });
-      } else {
-        return res
-          .status(400)
-          .json({ messageType: "E", error: "Invalid configuration ID" });
       }
+      return res.status(200).json({ messageType: "S", data: updatedConfig });
     } catch (error) {
       console.error("Error updating configuration:", error);
       res

@@ -58,7 +58,18 @@ export async function update(model, params) {
     throw new Error("mongodb update error");
   }
 }
-
+export async function updateExisting(model, params) {
+  try {
+    return model.findOneAndUpdate(
+      params.filter,
+      { $set: params.update },
+      { new: true, lean: true, upsert: true } 
+    );
+  } catch (error) {
+    console.error(`mongodb error:`, error);
+    throw new Error("mongodb update existing error");
+  }
+}
 export async function getAndUpdate(
   model,
   {
