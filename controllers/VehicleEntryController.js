@@ -4,6 +4,7 @@ import VehicleWithoutPoConfig from "../Models/VehicleWithoutPoConfig.js";
 import VehicleData from "../Models/VehicleDataModel.js";
 import VacantVehicle from "../Models/VacantVehicle.js";
 import OtherVehicle from "../Models/OtherVehicle.js";
+import { defaultFieldConfigurations } from "../Schemas/FieldConfigurationSchema.js";
 export const VehicleEntryController = {
   async getConfigByContentId(req, res) {
     try {
@@ -73,7 +74,7 @@ export const VehicleEntryController = {
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
         });
-      } else if (type === "other") {
+      } else if (type === "other_vehicle") {
         response = await mongodb.insert(VehicleData, {
           userId: "admin",
           entry_type: "other",
@@ -93,6 +94,41 @@ export const VehicleEntryController = {
         messageType: "E",
         message: error.message,
       });
+    }
+  },
+  async getDefaultEntries(req, res) {
+    try {
+      const defaultHeaderFields = defaultFieldConfigurations;
+      res.status(200).json({ messageType: "S", data: defaultHeaderFields });
+    } catch (error) {
+      console.error("Error fetching default vehicle entries:", error);
+      res
+        .status(500)
+        .json({ messageType: "E", message: "Internal server error" });
+    }
+  },
+  async getSavedEntries(req, res) {
+    try {
+      const savedEntries = await mongodb.find(VehicleData, {
+        status: "entry_draft",
+      });
+      res.status(200).json({ messageType: "S", data: savedEntries });
+    } catch (error) {
+      console.error("Error fetching saved vehicle entries:", error);
+      res
+        .status(500)
+        .json({ messageType: "E", message: "Internal server error" });
+    }
+  },
+  async getSavedEntries(req, res) {
+    try {
+      const savedEntries = await mongodb.find(VehicleData, {});
+      res.status(200).json({ messageType: "S", data: savedEntries });
+    } catch (error) {
+      console.error("Error fetching saved vehicle entries:", error);
+      res
+        .status(500)
+        .json({ messageType: "E", message: "Internal server error" });
     }
   },
 };

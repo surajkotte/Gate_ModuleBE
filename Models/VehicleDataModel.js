@@ -20,7 +20,7 @@ const VehicleDataSchema = new mongoose.Schema(
     entry_type: {
       type: String,
       required: true,
-      enum: ["with_po", "without_po", "vacent"],
+      enum: ["with_po", "without_po", "vacant", "other"],
     },
     HeaderFieldConfigurations: [FieldSchema],
     ItemFieldConfigurations: [[FieldSchema]],

@@ -24,4 +24,20 @@ get_router.get("/config/:type/", (req, res, next) => {
   }
 });
 
+get_router.get(
+  "/default-entries",
+  (req, res, next) => {
+    next();
+  },
+  VehicleEntryController.getDefaultEntries
+);
+
+get_router.get(
+  "/saved-entries",
+  (req, res, next) => {
+    next();
+  },
+  VehicleEntryController.getSavedEntries
+);
+
 export default get_router;

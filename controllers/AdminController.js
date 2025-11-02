@@ -37,7 +37,7 @@ export const AdminController = {
         config = await mongodb.get(VehicleWithPoConfig, {});
       } else if (id === "vehicle_without_po") {
         config = await mongodb.get(VehicleWithoutPoConfig, {});
-      } else if (id === "other") {
+      } else if (id === "other_vehicle") {
         config = await mongodb.get(OtherVehicle, {});
       } else if (id === "vacant_vehicle") {
         config = await mongodb.get(VacantVehicle, {});
@@ -104,7 +104,6 @@ export const AdminController = {
         .json({ messageType: "E", error: "Invalid configuration ID" });
     }
     try {
-      console.log(`HeaderFieldConfigurations: ${JSON.stringify(HeaderFieldConfigurations)}`);
       let updatedConfig = await mongodb.update(Model, {
         filter: { componentId: id },
         update: { HeaderFieldConfigurations, ItemFieldConfigurations },
