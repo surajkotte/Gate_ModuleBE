@@ -12,4 +12,13 @@ post_router.post("/admin/:id", (req, res) => {
   }
 });
 post_router.post("/entry/save", VehicleEntryController.updateVehicleEntry);
+post_router.post(
+  "/admin/weighbridge",
+  (req, res, next) => {
+    next();
+  },
+  (req, res) => {
+    return AdminController.enableWeighbridgeConfig(req, res);
+  }
+);
 export default post_router;

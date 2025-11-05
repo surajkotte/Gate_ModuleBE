@@ -24,6 +24,8 @@ const VehicleDataSchema = new mongoose.Schema(
     },
     HeaderFieldConfigurations: [FieldSchema],
     ItemFieldConfigurations: [[FieldSchema]],
+    location: { type: String, default: "" },
+    remarks: { type: String, default: "" },
     userId: { type: String, required: true, default: "admin" },
   },
   { timestamps: true }

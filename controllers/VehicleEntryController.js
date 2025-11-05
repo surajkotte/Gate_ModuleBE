@@ -48,6 +48,7 @@ export const VehicleEntryController = {
   },
   async updateVehicleEntry(req, res) {
     const { data, type } = req.body;
+    console.log("heer");
     try {
       let response;
       if (type === "vehicle_with_po") {

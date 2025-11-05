@@ -3,6 +3,7 @@ import VehicleWithPoConfig from "../Models/VehicleWithPoConfig.js";
 import VehicleWithoutPoConfig from "../Models/VehicleWithoutPoConfig.js";
 import OtherVehicle from "../Models/OtherVehicle.js";
 import VacantVehicle from "../Models/VacantVehicle.js";
+import e from "express";
 
 export const AdminController = {
   async getVehicleWithPoConfig(req, res) {
@@ -54,7 +55,43 @@ export const AdminController = {
         .json({ messageType: "E", error: "Internal server error" });
     }
   },
+  async enableWeighbridgeConfig(req, res) {
+    const { type, state, weighbridgetype } = req.body;
+    const isInEnabled = weighbridgetype === "in" && state === true;
+    const isOutEnabled = weighbridgetype === "out" && state === true;
 
+    const configMap = {
+      vehicle_with_po: VehicleWithPoConfig,
+      vehicle_without_po: VehicleWithoutPoConfig,
+      other_vehicle: OtherVehicle,
+      vacant_vehicle: VacantVehicle,
+    };
+
+    const Model = configMap[type];
+
+    if (!Model) {
+      return res
+        .status(400)
+        .json({ messageType: "E", error: "Invalid configuration type" });
+    }
+
+    try {
+      const updatedConfig = await mongodb.update(Model, {
+        filter: { componentId: type },
+        update: {
+          isWeighbridgeInEnabled: isInEnabled,
+          isWeighbridgeOutEnabled: isOutEnabled,
+        },
+      });
+
+      res.status(200).json({ messageType: "S", data: updatedConfig });
+    } catch (error) {
+      console.error("Error updating weighbridge configuration:", error);
+      res
+        .status(500)
+        .json({ messageType: "E", error: "Internal server error" });
+    }
+  },
   async updateVehicleWithPoConfig(req, res) {
     try {
       const { HeaderFieldConfigurations, ItemFieldConfigurations } = req.body;
@@ -88,7 +125,13 @@ export const AdminController = {
   },
   async updatedConfig(req, res) {
     const { id } = req.params;
-    const { HeaderFieldConfigurations, ItemFieldConfigurations } = req.body;
+    const {
+      HeaderFieldConfigurations,
+      ItemFieldConfigurations,
+      WeighbridgeFieldConfigurations,
+      isWeighbridgeInEnabled,
+      isWeighbridgeOutEnabled,
+    } = req.body;
     const configMap = {
       vehicle_with_po: VehicleWithPoConfig,
       vehicle_without_po: VehicleWithoutPoConfig,
@@ -106,7 +149,13 @@ export const AdminController = {
     try {
       let updatedConfig = await mongodb.update(Model, {
         filter: { componentId: id },
-        update: { HeaderFieldConfigurations, ItemFieldConfigurations },
+        update: {
+          HeaderFieldConfigurations,
+          ItemFieldConfigurations,
+          WeighbridgeInFieldConfigurations: WeighbridgeFieldConfigurations,
+          isWeighbridgeInEnabled,
+          isWeighbridgeOutEnabled,
+        },
       });
       console.log(`Updated Config: ${updatedConfig}`);
       if (!updatedConfig) {
@@ -119,7 +168,13 @@ export const AdminController = {
         const defaultDocument = await newConfigDocument.save();
         updatedConfig = await mongodb.update(Model, {
           filter: { componentId: id },
-          update: { HeaderFieldConfigurations, ItemFieldConfigurations },
+          update: {
+            HeaderFieldConfigurations,
+            ItemFieldConfigurations,
+            WeighbridgeInFieldConfigurations: WeighbridgeFieldConfigurations,
+            isWeighbridgeInEnabled,
+            isWeighbridgeOutEnabled,
+          },
         });
       }
       return res.status(200).json({ messageType: "S", data: updatedConfig });
