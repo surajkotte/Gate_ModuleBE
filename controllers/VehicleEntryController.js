@@ -132,4 +132,16 @@ export const VehicleEntryController = {
         .json({ messageType: "E", message: "Internal server error" });
     }
   },
+  async getSavedEntryById(req, res) {
+    try {
+      const { id } = req.params;
+      const savedEntry = await mongodb.find(VehicleData, { _id: id });
+      res.status(200).json({ messageType: "S", data: savedEntry });
+    } catch (error) {
+      console.error("Error fetching saved vehicle entry by ID:", error);
+      res
+        .status(500)
+        .json({ messageType: "E", message: "Internal server error" });
+    }
+  },
 };

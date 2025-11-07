@@ -40,4 +40,12 @@ get_router.get(
   VehicleEntryController.getSavedEntries
 );
 
+get_router.get(
+  "/saved-entry/:id",
+  (req, res, next) => {
+    next();
+  },
+  VehicleEntryController.getSavedEntryById
+)
+
 export default get_router;
