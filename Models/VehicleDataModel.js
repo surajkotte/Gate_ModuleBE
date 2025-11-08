@@ -15,7 +15,14 @@ const VehicleDataSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["gate_in", "weigh_bridge", "unloading", "gate_out", "entry_draft"],
+      enum: [
+        "gate_in",
+        "weigh_bridge_in",
+        "unloading",
+        "gate_out",
+        "entry_draft",
+        "weigh_bridge_out",
+      ],
     },
     entry_type: {
       type: String,

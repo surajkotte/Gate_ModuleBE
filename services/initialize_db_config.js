@@ -27,6 +27,12 @@ export async function initializeDefaultConfig() {
         case "vacant_vehicle":
           Model = VacantVehicle;
           break;
+        case "weight_in":
+          Model = WeightInModel;
+          break;
+        case "weight_out":
+          Model = WeightOutModel;
+          break;
         default:
           continue;
       }

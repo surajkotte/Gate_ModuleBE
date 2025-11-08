@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import FieldConfigurationSchema, {
   defaultFieldConfigurations,
+  defaultWeightInFieldConfigurations,
+  defaultWeightOutFieldConfigurations,
 } from "../Schemas/FieldConfigurationSchema.js";
 
 const VacantVehicleSchema = new mongoose.Schema(
@@ -15,8 +17,14 @@ const VacantVehicleSchema = new mongoose.Schema(
       default: defaultFieldConfigurations,
     },
     ItemFieldConfigurations: [FieldConfigurationSchema],
-    WeighbridgeInFieldConfigurations: [FieldConfigurationSchema],
-    WeighbridgeOutFieldConfigurations: [FieldConfigurationSchema],
+    WeighbridgeInFieldConfigurations: {
+      type: [FieldConfigurationSchema],
+      default: defaultWeightInFieldConfigurations,
+    },
+    WeighbridgeOutFieldConfigurations: {
+      type: [FieldConfigurationSchema],
+      default: defaultWeightOutFieldConfigurations,
+    },
   },
   { timestamps: true }
 );

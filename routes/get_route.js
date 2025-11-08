@@ -2,6 +2,7 @@ import express from "express";
 import { AdminController } from "../controllers/AdminController.js";
 import { get } from "http";
 import { VehicleEntryController } from "../controllers/VehicleEntryController.js";
+import WeighbridgeController from "../controllers/VehicleWeighbridgeController.js";
 
 const get_router = express.Router();
 
@@ -46,6 +47,13 @@ get_router.get(
     next();
   },
   VehicleEntryController.getSavedEntryById
-)
+);
+get_router.get(
+  "/weighbridge/header",
+  (req, res, next) => {
+    next();
+  },
+  WeighbridgeController.getDefaultHeader
+);
 
 export default get_router;
