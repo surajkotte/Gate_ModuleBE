@@ -8,6 +8,7 @@ import {
   defaultWeightInFieldConfigurations,
   defaultWeightOutFieldConfigurations,
 } from "../Schemas/FieldConfigurationSchema.js";
+import WeighbridgeModel from "../Models/WeighbridgeModel.js";
 
 const WeighbridgeController = {
   async getDefaultWeighbridgeConfiguration(req, res) {
@@ -35,6 +36,14 @@ const WeighbridgeController = {
         messageType: "S",
         data: defaultWeightOutFieldConfigurations,
       });
+    } catch (error) {
+      res.status(500).json({ messageType: "E", message: error.message });
+    }
+  },
+  async getVehicleData(req, res) {
+    try {
+      const response = await mongodb.find(WeighbridgeModel, {});
+      res.status(200).json({ messageType: "S", data: response });
     } catch (error) {
       res.status(500).json({ messageType: "E", message: error.message });
     }

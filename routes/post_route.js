@@ -12,6 +12,7 @@ post_router.post("/admin/:id", (req, res) => {
   }
 });
 post_router.post("/entry/save", VehicleEntryController.updateVehicleEntry);
+post_router.post("/entry/submit", VehicleEntryController.submitVehicleEntry);
 post_router.post(
   "/admin/weighbridge",
   (req, res, next) => {

@@ -143,9 +143,9 @@ export const defaultFieldConfigurations = [
 
 export const defaultWeightInFieldConfigurations = [
   {
-    fieldName: "vehicle_id",
+    fieldName: "vehicle_number",
     fieldType: "text",
-    fieldLabel: "Vehicle ID",
+    fieldLabel: "Vehicle Number",
     isRequired: true,
     width: "flex",
     icon: "truck",
@@ -212,9 +212,9 @@ export const defaultWeightInFieldConfigurations = [
 
 export const defaultWeightOutFieldConfigurations = [
   {
-    fieldName: "vehicle_id",
+    fieldName: "vehicle_number",
     fieldType: "text",
-    fieldLabel: "Vehicle ID",
+    fieldLabel: "Vehicle Number",
     isRequired: true,
     width: "flex",
     icon: "truck",

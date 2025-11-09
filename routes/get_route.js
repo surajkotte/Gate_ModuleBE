@@ -56,4 +56,12 @@ get_router.get(
   WeighbridgeController.getDefaultHeader
 );
 
+get_router.get(
+  "/weighbridge/vehicleData",
+  (req, res, next) => {
+    next();
+  },
+  WeighbridgeController.getVehicleData
+);
+
 export default get_router;

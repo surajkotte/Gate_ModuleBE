@@ -5,6 +5,7 @@ import VehicleData from "../Models/VehicleDataModel.js";
 import VacantVehicle from "../Models/VacantVehicle.js";
 import OtherVehicle from "../Models/OtherVehicle.js";
 import { defaultFieldConfigurations } from "../Schemas/FieldConfigurationSchema.js";
+import WeighbridgeModel from "../Models/WeighbridgeModel.js";
 export const VehicleEntryController = {
   async getConfigByContentId(req, res) {
     try {
@@ -48,7 +49,6 @@ export const VehicleEntryController = {
   },
   async updateVehicleEntry(req, res) {
     const { data, type } = req.body;
-    console.log("heer");
     try {
       let response;
       if (type === "vehicle_with_po") {
@@ -89,6 +89,91 @@ export const VehicleEntryController = {
           .json({ messageType: "E", error: "Invalid type parameter" });
       }
 
+      res.status(200).json({ messageType: "S", data: response });
+    } catch (error) {
+      res.status(400).json({
+        messageType: "E",
+        message: error.message,
+      });
+    }
+  },
+  async submitVehicleEntry(req, res) {
+    const { data, type } = req.body;
+    try {
+      let response;
+      const typeMap = {
+        vehicle_with_po: { entryType: "with_po", model: VehicleWithPoConfig },
+        vehicle_without_po: {
+          entryType: "without_po",
+          model: VehicleWithoutPoConfig,
+        },
+        vacant_vehicle: { entryType: "vacant", model: VacantVehicle },
+        other_vehicle: { entryType: "other", model: OtherVehicle },
+      };
+      const choosenType = typeMap[type];
+
+      if (choosenType) {
+        const readConfig = await mongodb.find(choosenType?.model, {});
+        if (readConfig) {
+          const isWeighbridgeInEnabled = readConfig[0]?.isWeighbridgeInEnabled;
+
+          if (isWeighbridgeInEnabled) {
+            const weighBridgeFields =
+              readConfig[0]?.WeighbridgeInFieldConfigurations || [];
+            const updatedWeighbridgeFields = weighBridgeFields?.map(
+              (wbField) => {
+                const match = data?.HeaderFieldConfigurations?.find(
+                  (h) => h.fieldName === wbField.fieldName
+                );
+
+                return {
+                  ...wbField,
+                  value: match ? match.value || "" : "",
+                };
+              }
+            );
+
+            const response = await mongodb.insert(WeighbridgeModel, {
+              userId: "admin",
+              entry_type: choosenType?.entryType,
+              status: "weigh_bridge_in",
+              WeighbridgeFieldConfigurations: updatedWeighbridgeFields,
+            });
+            const response1 = await mongodb.insert(VehicleData, {
+              userId: "admin",
+              entry_type: choosenType?.entryType,
+              status: "weigh_bridge_in",
+              HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
+              ItemFieldConfigurations: data?.ItemFieldConfigurations?.flat(),
+            });
+            if (response && response1) {
+              res.status(200).json({ messageType: "S", data: response1 });
+            } else {
+              return res.status(400).json({
+                messageType: "E",
+                error: "Unable to update data, Plase try later",
+              });
+            }
+          } else {
+            const response = await mongodb.insert(VehicleData, {
+              userId: "admin",
+              entry_type: "with_po",
+              status: "unloading",
+              HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
+              ItemFieldConfigurations: data?.ItemFieldConfigurations,
+            });
+            res.status(200).json({ messageType: "S", data: response });
+          }
+        } else {
+          return res
+            .status(400)
+            .json({ messageType: "E", error: "No configuration found" });
+        }
+      } else {
+        return res
+          .status(400)
+          .json({ messageType: "E", error: "Invalid type parameter" });
+      }
       res.status(200).json({ messageType: "S", data: response });
     } catch (error) {
       res.status(400).json({
