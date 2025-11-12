@@ -133,12 +133,6 @@ export const VehicleEntryController = {
               }
             );
 
-            const response = await mongodb.insert(WeighbridgeModel, {
-              userId: "admin",
-              entry_type: choosenType?.entryType,
-              status: "weigh_bridge_in",
-              WeighbridgeFieldConfigurations: updatedWeighbridgeFields,
-            });
             const response1 = await mongodb.insert(VehicleData, {
               userId: "admin",
               entry_type: choosenType?.entryType,
@@ -146,8 +140,23 @@ export const VehicleEntryController = {
               HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
               ItemFieldConfigurations: data?.ItemFieldConfigurations?.flat(),
             });
-            if (response && response1) {
-              res.status(200).json({ messageType: "S", data: response1 });
+            if (response1) {
+              console.log(response1);
+              const response = await mongodb.insert(WeighbridgeModel, {
+                userId: "admin",
+                entry_type: choosenType?.entryType,
+                weighbridgeFlow: "weigh_bridge_in",
+                status: "draft",
+                WeighbridgeFieldConfigurations: updatedWeighbridgeFields,
+                vehicleDataModelId: response1?._id,
+              });
+              if (response1) {
+                res.status(200).json({ messageType: "S", data: response1 });
+              } else {
+                throw new Error(
+                  "Unable to save entries.Please contact system administrator"
+                );
+              }
             } else {
               return res.status(400).json({
                 messageType: "E",

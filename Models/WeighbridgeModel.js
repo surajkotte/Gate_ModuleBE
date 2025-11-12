@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import FieldConfigurationSchema from "../Schemas/FieldConfigurationSchema.js";
+import { type } from "os";
 
 const FieldSchema = mongoose.Schema(
   {
@@ -12,10 +13,15 @@ const FieldSchema = mongoose.Schema(
 const WeighbridgeSchema = new mongoose.Schema(
   {
     id: { type: mongoose.Schema.Types.ObjectId },
-    status: {
+    weighbridgeFlow: {
       type: String,
       required: true,
       enum: ["weigh_bridge_in", "weigh_bridge_out"],
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ["saved", "submitted", "draft"],
     },
     entry_type: {
       type: String,
@@ -26,6 +32,7 @@ const WeighbridgeSchema = new mongoose.Schema(
     location: { type: String, default: "" },
     remarks: { type: String, default: "" },
     userId: { type: String, required: true, default: "admin" },
+    vehicleDataModelId: { type: mongoose.Schema.ObjectId, required: true },
   },
   { timestamps: true }
 );

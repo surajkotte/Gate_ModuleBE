@@ -1,6 +1,7 @@
 import express from "express";
 import { AdminController } from "../controllers/AdminController.js";
 import { VehicleEntryController } from "../controllers/VehicleEntryController.js";
+import WeighbridgeController from "../controllers/VehicleWeighbridgeController.js";
 
 const post_router = express.Router();
 post_router.post("/admin/:id", (req, res) => {
@@ -21,5 +22,13 @@ post_router.post(
   (req, res) => {
     return AdminController.enableWeighbridgeConfig(req, res);
   }
+);
+
+post_router.post(
+  "/weighbridge/update",
+  (req, res, next) => {
+    next();
+  },
+  WeighbridgeController?.updateWeighbridgeData
 );
 export default post_router;
