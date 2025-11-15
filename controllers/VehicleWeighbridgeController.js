@@ -38,7 +38,9 @@ const WeighbridgeController = {
   },
   async getVehicleData(req, res) {
     try {
-      const response = await mongodb.find(WeighbridgeModel, {});
+      const response = await mongodb.find(WeighbridgeModel, {
+        status: { $ne: "submitted" },
+      });
       res.status(200).json({ messageType: "S", data: response });
     } catch (error) {
       res.status(500).json({ messageType: "E", message: error.message });
@@ -58,6 +60,7 @@ const WeighbridgeController = {
         update: updatePayload,
       });
       if (updatedDocument) {
+        console.log(vehicleDataModelId);
         const vehicleData = await mongodb.updateExisting(VehicleDataModel, {
           filter: { _id: vehicleDataModelId },
           update: { status: "unloading" },

@@ -138,7 +138,7 @@ export const VehicleEntryController = {
               entry_type: choosenType?.entryType,
               status: "weigh_bridge_in",
               HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
-              ItemFieldConfigurations: data?.ItemFieldConfigurations?.flat(),
+              ItemFieldConfigurations: data?.ItemFieldConfigurations,
             });
             if (response1) {
               console.log(response1);
@@ -207,17 +207,6 @@ export const VehicleEntryController = {
       const savedEntries = await mongodb.find(VehicleData, {
         status: "entry_draft",
       });
-      res.status(200).json({ messageType: "S", data: savedEntries });
-    } catch (error) {
-      console.error("Error fetching saved vehicle entries:", error);
-      res
-        .status(500)
-        .json({ messageType: "E", message: "Internal server error" });
-    }
-  },
-  async getSavedEntries(req, res) {
-    try {
-      const savedEntries = await mongodb.find(VehicleData, {});
       res.status(200).json({ messageType: "S", data: savedEntries });
     } catch (error) {
       console.error("Error fetching saved vehicle entries:", error);

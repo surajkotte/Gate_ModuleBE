@@ -63,7 +63,7 @@ export async function updateExisting(model, params) {
     return model.findOneAndUpdate(
       params.filter,
       { $set: params.update },
-      { new: true, lean: true, upsert: true } 
+      { new: true, lean: true }
     );
   } catch (error) {
     console.error(`mongodb error:`, error);
