@@ -4,8 +4,12 @@ import VehicleWithoutPoConfig from "../Models/VehicleWithoutPoConfig.js";
 import VehicleData from "../Models/VehicleDataModel.js";
 import VacantVehicle from "../Models/VacantVehicle.js";
 import OtherVehicle from "../Models/OtherVehicle.js";
-import { defaultFieldConfigurations } from "../Schemas/FieldConfigurationSchema.js";
+import {
+  defaultFieldConfigurations,
+  AnalyticsConfigurationSchema,
+} from "../Schemas/FieldConfigurationSchema.js";
 import WeighbridgeModel from "../Models/WeighbridgeModel.js";
+import VehicleDataModel from "../Models/VehicleDataModel.js";
 export const VehicleEntryController = {
   async getConfigByContentId(req, res) {
     try {
@@ -232,6 +236,55 @@ export const VehicleEntryController = {
       res
         .status(500)
         .json({ messageType: "E", message: "Internal server error" });
+    }
+  },
+  async getAnalytics(req, res) {
+    try {
+      const fieldConfiguration = AnalyticsConfigurationSchema;
+      const top = 0;
+      const skip = 10;
+
+      const vehicleData = await mongodb.find(VehicleDataModel, {}, top, skip);
+
+      if (!vehicleData || vehicleData.length === 0) {
+        return res.status(200).json({ messageType: "S", data: [] });
+      }
+
+      const responseData = vehicleData.map((vehicleInfo) => {
+        const headerMap = {};
+        vehicleInfo.HeaderFieldConfigurations.forEach((field) => {
+          headerMap[field.fieldName] = field.value ?? "";
+        });
+        const row = {};
+
+        fieldConfiguration.forEach((fieldInfo) => {
+          const fieldName = fieldInfo.fieldName;
+          if (headerMap[fieldName] !== undefined) {
+            row[fieldName] = headerMap[fieldName];
+            return;
+          }
+          if (vehicleInfo[fieldName] !== undefined) {
+            row[fieldName] = vehicleInfo[fieldName];
+            return;
+          }
+          if (fieldName === "duration") {
+          }
+          row[fieldName] = "";
+        });
+        const startDate = row["in_date"];
+        const endDate = row["out_date"] || new Date();
+        const duration_time = startDate - endDate;
+        row["duration"] = duration_time;
+        return row;
+      });
+
+      return res.status(200).json({
+        messageType: "S",
+        data: { config: fieldConfiguration, data: responseData },
+      });
+    } catch (error) {
+      console.error("Analytics Error:", error);
+      res.status(500).json({ messageType: "E", message: error.message });
     }
   },
 };

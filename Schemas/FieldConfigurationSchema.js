@@ -300,9 +300,18 @@ export const defaultWeightOutFieldConfigurations = [
     fixedField: false,
   },
 ];
-
+export const AnalyticsConfigurationSchema = [
+  { fieldName: "vehicle_number", fieldLabel: "Vehicle No", sequence: 2 },
+  { fieldName: "gateEntryNumber", fieldLabel: "Gate Entry ID", sequence: 1 },
+  { fieldName: "driver_name", fieldLabel: "Driver Name", sequence: 3 },
+  { fieldName: "entry_type", fieldLabel: "Type", sequence: 4 },
+  { fieldName: "transporter_name", fieldLabel: "Vendor", sequence: 5 },
+  { fieldName: "in_date", fieldLabel: "Gate In", sequence: 6 },
+  { fieldName: "out_date", fieldLabel: "Gate Out", sequence: 7 },
+  { fieldName: "duration", fieldLabel: "Duration", sequence: 8 },
+  { fieldName: "status", fieldLabel: "Status", sequence: 9 },
+  { fieldName: "location", fieldLabel: "Current location", sequence: 10 },
+  { fieldName: "weight", fieldLabel: "Weight", sequence: 11 },
+  { fieldName: "remarks", fieldLabel: "Remarks", sequence: 9 },
+];
 export default FieldConfigurationSchema;
-
-const AnalyticsConfigurationSchema = {
-  
-};

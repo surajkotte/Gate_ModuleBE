@@ -64,4 +64,12 @@ get_router.get(
   WeighbridgeController.getVehicleData
 );
 
+get_router.get(
+  "/analytics",
+  (req, res, next) => {
+    next();
+  },
+  VehicleEntryController.getAnalytics
+);
+
 export default get_router;
