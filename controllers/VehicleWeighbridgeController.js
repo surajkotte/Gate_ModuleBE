@@ -54,6 +54,7 @@ const WeighbridgeController = {
       const updatePayload = {
         WeighbridgeFieldConfigurations,
         status: "submitted",
+        endDate: new Date(),
       };
       const updatedDocument = await mongodb.updateExisting(WeighbridgeModel, {
         filter: filter,

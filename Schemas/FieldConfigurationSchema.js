@@ -302,3 +302,7 @@ export const defaultWeightOutFieldConfigurations = [
 ];
 
 export default FieldConfigurationSchema;
+
+const AnalyticsConfigurationSchema = {
+  
+};

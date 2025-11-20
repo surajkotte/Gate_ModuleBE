@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import FieldConfigurationSchema from "../Schemas/FieldConfigurationSchema.js";
+import { type } from "os";
 
 const FieldSchema = mongoose.Schema(
   {
@@ -29,11 +30,14 @@ const VehicleDataSchema = new mongoose.Schema(
       required: true,
       enum: ["with_po", "without_po", "vacant", "other"],
     },
+    startDate: { type: mongoose.Schema.Types.Date, required: true },
+    endDate: { type: mongoose.Schema.Types.Date },
     HeaderFieldConfigurations: [FieldSchema],
     ItemFieldConfigurations: [[FieldSchema]],
     location: { type: String, default: "" },
     remarks: { type: String, default: "" },
     userId: { type: String, required: true, default: "admin" },
+    gateEntryNumber: { type: String, required: true, unique: true },
   },
   { timestamps: true }
 );

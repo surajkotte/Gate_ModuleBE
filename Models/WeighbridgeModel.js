@@ -28,6 +28,8 @@ const WeighbridgeSchema = new mongoose.Schema(
       required: true,
       enum: ["with_po", "without_po", "vacant", "other"],
     },
+    startDate: { type: mongoose.Schema.Types.Date, required: true },
+    endDate: { type: mongoose.Schema.Types.Date },
     WeighbridgeFieldConfigurations: [FieldSchema],
     location: { type: String, default: "" },
     remarks: { type: String, default: "" },

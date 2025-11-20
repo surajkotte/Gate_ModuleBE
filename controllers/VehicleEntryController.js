@@ -58,6 +58,7 @@ export const VehicleEntryController = {
           status: "entry_draft",
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
+          startDate: new Date(),
         });
       } else if (type === "vehicle_without_po") {
         response = await mongodb.insert(VehicleData, {
@@ -66,6 +67,7 @@ export const VehicleEntryController = {
           status: "entry_draft",
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
+          startDate: new Date(),
         });
       } else if (type === "vacant_vehicle") {
         response = await mongodb.insert(VehicleData, {
@@ -74,6 +76,7 @@ export const VehicleEntryController = {
           status: "entry_draft",
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
+          startDate: new Date(),
         });
       } else if (type === "other_vehicle") {
         response = await mongodb.insert(VehicleData, {
@@ -82,6 +85,7 @@ export const VehicleEntryController = {
           status: "entry_draft",
           HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
           ItemFieldConfigurations: data?.ItemFieldConfigurations,
+          startDate: new Date(),
         });
       } else {
         return res
@@ -139,6 +143,7 @@ export const VehicleEntryController = {
               status: "weigh_bridge_in",
               HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
               ItemFieldConfigurations: data?.ItemFieldConfigurations,
+              startDate: new Date(),
             });
             if (response1) {
               console.log(response1);
@@ -149,6 +154,7 @@ export const VehicleEntryController = {
                 status: "draft",
                 WeighbridgeFieldConfigurations: updatedWeighbridgeFields,
                 vehicleDataModelId: response1?._id,
+                startDate: new Date(),
               });
               if (response1) {
                 res.status(200).json({ messageType: "S", data: response1 });
@@ -170,6 +176,7 @@ export const VehicleEntryController = {
               status: "unloading",
               HeaderFieldConfigurations: data?.HeaderFieldConfigurations,
               ItemFieldConfigurations: data?.ItemFieldConfigurations,
+              startDate: new Date(),
             });
             res.status(200).json({ messageType: "S", data: response });
           }
